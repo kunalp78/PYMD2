@@ -48,7 +48,7 @@ class User:
         name = input("Enter the name: ")
         phn_no = input("Enter the phone no: ")
         username = input("Enter the username: ")
-        if username in cls.user:
+        if username in cls.users:
             print("Username already exists!!")
             return None
         password = input("Enter the password: ")
@@ -60,7 +60,7 @@ class User:
     def login(cls):
         username = input("Enter the username: ")
         password = input("Enter the password: ")
-        if username in cls.user and cls.users.get(username).password == hash(password):
+        if username in cls.users and cls.users.get(username).__password == hash(password):
             print("Login Successfull!!")
             return cls.users[username]
         print("Username or Password not correct!!")
@@ -114,3 +114,104 @@ class Admin:
     @classmethod
     def get_movies(cls):
         return cls.movie
+
+    @classmethod
+    def add_movie(cls):
+        title = input("Enter the movie title").lower()
+        showtime = input("Enter the showtime").lower()
+        total_seats = input("Enter the total number of seats: ")
+        cls.movie.append(Movie(title, showtime, total_seats))
+        print("Movie has been successfully added!!")
+
+
+def main():
+    admin = Admin(input("Set the admin password!!"))
+
+    print("Movie Booking System!!")
+    while 1:
+        print("\n1) Register\n2) Login\n3) Admin \n4) Logout")
+        choice = int(input("Enter the choice: "))
+
+        if choice == 1:
+            User.register()
+        elif choice == 2:
+            user = User.login()
+            if user:
+                print("Booking Menu!!")
+                while 1:
+                    print("\n1) View Movie\n2) Book Movie\n3) View Booking\n4) Go to Main menu")
+                    user_choice = int(input("Enter your choice"))
+                    if user_choice == 1:
+                        if admin.get_movies():
+                            movie.display_details()
+                    elif user_choice == 2:
+                        if not admin.get_movies():
+                            print("No movies available!!")
+                            continue
+                        movie_tite = input("Enter the Movie Title: ").lower()
+                        for movie in admin.get_movies():
+                            if movie.title == movie_tite:
+                                if movie.available_seats > 0:
+                                    print(f"Available Seats: {movie.available_seats}")
+                                    seats_to_book = int(input("Enter the number of seats: "))
+                                    if movie.available_seats >= seats_to_book:
+                                        movie.available_seats -= seats_to_book
+                                        booking = Booking(user, movie, seats_to_book)
+                                        user.add_booking(booking)
+                                        print("Booking Successfull!!")
+                                    else:
+                                        print("Not sufficient seats available!!")
+                                else:
+                                    print("Housefull!")
+                            else:
+                                print("Please enter the correct title!!")
+                    elif user_choice == 3:
+                        if user.get_booking():
+                            for booking in user.get_booking():
+                                booking.dispay_details()
+                        else:
+                            print("Time to book your first movie!!")
+                    elif user_choice == 4:
+                        print("Returning to main menu!!")
+                        break
+                    else:
+                        print("Please enter correct choice!!")
+            else:
+                print("User not found!")
+        elif choice == 3:
+            admin_password = input("Enter the admin password: ")
+            if hash(admin_password) == Admin.password:
+                print("Welcome to the admin dashboard!!")
+                while True:
+                    print("\n1) Add movie\n2 Delete movie\n3) View Booking\n4) Exit")
+                    admin_choice = int(input("Hey Admin enter your choice: "))
+                    if admin_choice == 1:
+                        admin.add_movie()
+                    elif admin_choice == 2:
+                        title = input("Enter the movie title you want to delete: ")
+                        if len(admin.movie) == 0:
+                            print("No Movies availabe")
+                            continue
+                        for i in range(len(admin.movie)):
+                            if admin.movie[i].title == title:
+                                admin.movie.pop(i)
+                                print("Movie has been successfully deleted")
+                                break
+                    elif admin_choice == 3:
+                        if admin.get_movies():
+                            for movie in admin.get_movies():
+                                movie.display_details()
+                        else:
+                            print("Add new movies!!")
+                    elif admin_choice == 4:
+                        print("Logging out of admin!!")
+                        break
+                    else:
+                        break
+        elif choice == 4:
+            print("Thanks for using the movie booking system!!")
+            break
+        else:
+            print("You have the wrong choice\nPlease Enter again!!")
+
+main()
