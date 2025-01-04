@@ -76,10 +76,10 @@ class Movie:
         self.title = title
         self.showtime = showtime
         self.total_seating = int(total_seating)
-        self.available_seat = self.total_seating
+        self.available_seats = self.total_seating
     
     def display_details(self):
-        print(f"Movie: {self.title} | Showtime: {self.showtime} | Seats Available: {self.available_seat}")
+        print(f"Movie: {self.title} | Showtime: {self.showtime} | Seats Available: {self.available_seats}")
 
 
 class Booking:
@@ -143,7 +143,8 @@ def main():
                     user_choice = int(input("Enter your choice"))
                     if user_choice == 1:
                         if admin.get_movies():
-                            movie.display_details()
+                            for movie in admin.get_movies():
+                                movie.display_details()  # changed
                     elif user_choice == 2:
                         if not admin.get_movies():
                             print("No movies available!!")
@@ -168,7 +169,7 @@ def main():
                     elif user_choice == 3:
                         if user.get_booking():
                             for booking in user.get_booking():
-                                booking.dispay_details()
+                                booking.display_details()
                         else:
                             print("Time to book your first movie!!")
                     elif user_choice == 4:
